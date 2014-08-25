@@ -1,0 +1,341 @@
+<!doctype html>
+<html ng-app='pilgrimApp'>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Pilgrim</title>
+
+    <link href="css/all-47faafbd.css" rel="stylesheet" type="text/css" />
+
+    <script type="text/ng-template" id="noop.html"></script>
+  </head>
+
+  <body ng-controller='ExplorerCtrl' ng-cloak class="index ng-cloak">
+    <div class="container-fluid">
+      <div class='col-lg-4 well'>
+        <section id="scoped-objects" ng-controller="ObjectListCtrl">
+  <h1 class="brand">
+    <a href="/">Pilgrim</a>
+  </h1>
+  <div class="input-group">
+    <input type='text' ng-model="query.search" placeholder="Search" class="form-control">
+    <div class="input-group-btn">
+      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.service" btn-checkbox>Services</button>
+      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.message" btn-checkbox>Messages</button>
+      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.enum" btn-checkbox>Enums</button>
+    </div>
+  </div>
+  <div ng-show="(protos | filter:{fullName:query.objectQuery} | protoByType:query.scopedFilter).length">
+    <hr>
+    <ul class='list-unstyled proto-object-result-list'>
+      <li ng-repeat="protoObject in protos | filter:{fullName:query.objectQuery} | protoByType:query.scopedFilter | orderBy:'fullName'">
+        <a ng-class="protoObject.type" ng-href='#!/protos/{{protoObject.fullName}}' class="proto-object-result">
+          <span ng-class="protoObject.glyphs"></span>
+          {{protoObject.fullName}}
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
+
+      </div>
+      <div ng-controller="TabsCtrl" class='col-lg-8'>
+        <ul class='list-unstyled list-inline'>
+          <li ng-repeat="tab in tabs">
+            <div  ng-class="{active: (tab == activeTab)}" class='btn btn-default btn-small'>
+              <a ng-href="#!/protos/{{tab.protoObject.fullName}}">
+                <span class="{{tab.protoObject.glyphs}}"></span>
+                {{tab.protoObject.name}}
+                <a class='glyphicon glyphicon-remove-sign' ng-click="removeTab(tab)"> </a>
+              </a>
+            </div>
+          </li>
+        </ul>
+        <section id='current-object' ng-show='activeTab'>
+  <div class='proto-detail-header'>
+  <h1>
+    <span class="{{activeTab.protoObject.glyphs}}"></span>
+    <span ng-show="activeTab.protoObject.protoObject.descriptor.getf('options')" ng-click="openOptionsModal(activeTab.protoObject.protoObject.descriptor)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span>
+    {{activeTab.protoObject.name}}
+  </h1>
+  <p ng-show="activeTab.protoObject.protoObject.descriptor.getf('doc')">
+    <div ng-bind-html="activeTab.protoObject.protoObject.descriptor.getf('doc') | markdown"></div>
+  </p>
+  <table class='table'>
+    <tbody>
+      <tr>
+        <th>Full Name:</th>
+        <td class="wrap-word">{{activeTab.protoObject.fullName}}</td>
+      </tr>
+      <tr>
+        <th>Type:</th>
+        <td class="wrap-word">{{activeTab.protoObject.type}}</td>
+      </tr>
+      <tr ng-show="activeTab.protoObject.javaClassPath()">
+        <th>Java Classpath:</th>
+        <td class="wrap-word">{{activeTab.protoObject.javaClassPath()}}</td>
+      </tr>
+      <tr>
+        <th>Package:</th>
+        <td class="wrap-word">
+          <a ng-click="query.search = activeTab.protoObject.package">
+            {{activeTab.protoObject.package}}
+          </a>
+        </td>
+      </tr>
+      <tr ng-show="activeTab.protoObject.dependencies.length">
+        <th>Dependencies:</th>
+        <td class="wrap-word">
+          <ul class='list-unstyled'>
+            <li ng-repeat="file in activeTab.protoObject.dependencies">
+              {{file}}
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr ng-show="activeTab.protoObject.getf('options')">
+        <th>Options:</th>
+        <td class="wrap-word">
+          <pre>{{activeTab.protoObject.getf('options').asJSONWithPackages | json }}</pre>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script type="text/ng-template" id="optionsModal.html">
+  <div class="modal-header">
+    <h4>Options - {{fieldOptions.field.getf('name')}}</h4>
+  </div>
+  <div class='modal-body'>
+    <div class='proto-option-content'>
+      <pre><code>{{fieldOptions.field.getf('options').asJSONWithPackages() | json}}</code></pre>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="close()">Close</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="protoFileModal.html">
+  <div class="modal-header">
+    <h4>{{fileName}}</h4>
+  </div>
+  <div class='modal-body'>
+    <pre class='proto-file-content'>{{protoFileContent}}</pre>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="close()">Close</button>
+  </div>
+</script>
+
+  <div class='message' ng-if="activeTab.protoObject.isMessage">
+  <div ng-controller='MessageCtrl'>
+    <table class='table-striped table table-hover'>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Default</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-class-odd="'odd'" ng-repeat="field in ownPackageFields.fields">
+          <td><span ng-show="field.getf('options')" ng-click="openOptionsModal(field)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
+          <td ng-class="field.fieldType"></td>
+          <td>{{field.getf('number')}}</td>
+          <td>{{fieldType(field)}}</td>
+          <td>
+            <span ng-hide="isComplexType(field)">
+              {{field | typeAsString:activeTab.protoObject.package }}
+            </span>
+            <span ng-show="isComplexType(field)">
+              <a href="#!/protos/{{field.concrete.fullName}}">
+                {{field | typeAsString:activeTab.protoObject.package }}
+              </a>
+            </span>
+          </td>
+          <td><strong>{{field.getf('name')}}</strong></td>
+          <td>{{field.getf('default_value') | displayValue}}</td>
+          <td>{{field.getf('doc')}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div ng-show='otherPackageFields.length'>
+      <h4>Extensions</h4>
+      <div ng-repeat="otherFields in otherPackageFields">
+        <hr>
+        <h6>
+          From:
+          <a ng-click="query.search = otherFields.pkg">
+            {{otherFields.pkg}}
+          </a>
+        </h6>
+        <table class='table-striped table table-hover'>
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Default</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-class-odd="'odd'" ng-repeat="field in otherFields.fields">
+              <td ng-class="field.fieldType"></td>
+              <td>{{field.getf('number')}}</td>
+              <td>{{fieldType(field)}}</td>
+              <td>
+                <span ng-hide="isComplexType(field)">
+                  {{field | typeAsString:activeTab.protoObject.package }}
+                </span>
+                <span ng-show="isComplexType(field)">
+                  <a href="#!/protos/{{field.concrete.fullName}}">
+                    {{field | typeAsString:activeTab.protoObject.package }}
+                  </a>
+                </span>
+              </td>
+              <td><strong>{{field.getf('name')}}</strong></td>
+              <td>{{field.getf('default_value') | displayValue}}</td>
+              <td>{{field.getf('doc')}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+  <div class='service' ng-if="activeTab.protoObject.isService">
+  <div ng-controller='ServiceCtrl'>
+    <table class='table table-striped table-hover'>
+      <thead>
+        <tr>
+          <th></th>
+          <th>Method</th>
+          <th>Request Type</th>
+          <th>Return Type</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="method in service.protoObject.descriptor.getf('method')">
+          <td><span ng-show="method.getf('options')" ng-click="openOptionsModal(method)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
+          <td>{{method.getf('name')}}</td>
+          <td>
+           <a ng-href="#!/protos/{{method.inputType.fullName}}">
+            {{method.inputType | typeAsString:service.package}}
+           </a>
+          </td>
+          <td>
+           <a ng-href="#!/protos/{{method.outputType.fullName}}">
+             {{method.outputType | typeAsString:service.package}}
+           </a>
+          </td>
+          <td>{{method.getf('doc')}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+  <div class='enum' ng-if="activeTab.protoObject.isEnum">
+  <div ng-controller="EnumCtrl">
+    <table class='table table-striped table-hover'>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="def in enumProto.protoObject.descriptor.getf('value')">
+          <td><span ng-show="def.getf('options')" ng-click="openOptionsModal(def)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
+          <td>{{def.getf('number')}}</td>
+          <td>{{def.getf('name')}}</td>
+          <td><div ng-bind-html="def.getf('doc') | markdown"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</section>
+
+        <!-- The ng-view is only a trigger to let the controller get setup -->
+        <div ng-view></div>
+      </div>
+    </div>
+
+    <script type="text/ng-template" id="loadingModal.html">
+      <div class="modal-header">
+        <h4>Fetching Protos</h4>
+      </div>
+      <div class='modal-body'>
+        <div class='spinner'>
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="errorLoadingProtos.html">
+      <div class="modal-header">
+        <h4>Could not fetch protos ({{error.status}})</h4>
+        <div class='modal-body'>
+          <p>{{error.data}}</p>
+          <p>Error fetching {{protoBundle}}</p>
+
+          <br>
+          <div id="knownProtoBundles">
+            <h4>Example bundles</h4>
+            <ul>
+              <li><a href="/?protoBundle=/proto-bundles/fender-proto-bundle.json">Fender</a> (<a href="https://github.com/hassox/fender">Github</a>)</li>
+              <li><a href="/?protoBundle=/proto-bundles/marvel-proto-bundle.json">Marvel</a> (<a href="https://github.com/hassox/marvel-protos">Github</a>)</li>
+            </ul>
+          </div>
+          <br>
+
+          <p>
+            Want to see your own proto bundle? Use <a href="https://github.com/hassox/pilgrimize">pilgrimize</a>
+            <br>
+            <strong>No proto files or bundles are uploaded to Pilgrim</strong>
+          </p>
+
+
+          <form method="GET" action="#!/" role="form">
+
+            <div class="form-group">
+              <label class="col-2 control-label">Fetch protos</label>
+              <input class='form-control' ng-model="newBundle" name="protoBundle"/>
+            </div>
+
+            <input type="submit" value="Fetch" class="btn btn-default"/>
+          </form>
+        </div>
+      </div>
+    </script>
+
+    <script src="js/vendor-fd59e95e.js" type="text/javascript"></script>
+    <script src="js/app-8c97189a.js" type="text/javascript"></script>
+  </body>
+</html>

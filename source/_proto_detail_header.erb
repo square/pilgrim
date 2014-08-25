@@ -1,0 +1,76 @@
+<div class='proto-detail-header'>
+  <h1>
+    <span class="{{activeTab.protoObject.glyphs}}"></span>
+    <span ng-show="activeTab.protoObject.protoObject.descriptor.getf('options')" ng-click="openOptionsModal(activeTab.protoObject.protoObject.descriptor)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span>
+    {{activeTab.protoObject.name}}
+  </h1>
+  <p ng-show="activeTab.protoObject.protoObject.descriptor.getf('doc')">
+    <div ng-bind-html="activeTab.protoObject.protoObject.descriptor.getf('doc') | markdown"></div>
+  </p>
+  <table class='table'>
+    <tbody>
+      <tr>
+        <th>Full Name:</th>
+        <td class="wrap-word">{{activeTab.protoObject.fullName}}</td>
+      </tr>
+      <tr>
+        <th>Type:</th>
+        <td class="wrap-word">{{activeTab.protoObject.type}}</td>
+      </tr>
+      <tr ng-show="activeTab.protoObject.javaClassPath()">
+        <th>Java Classpath:</th>
+        <td class="wrap-word">{{activeTab.protoObject.javaClassPath()}}</td>
+      </tr>
+      <tr>
+        <th>Package:</th>
+        <td class="wrap-word">
+          <a ng-click="query.search = activeTab.protoObject.package">
+            {{activeTab.protoObject.package}}
+          </a>
+        </td>
+      </tr>
+      <tr ng-show="activeTab.protoObject.dependencies.length">
+        <th>Dependencies:</th>
+        <td class="wrap-word">
+          <ul class='list-unstyled'>
+            <li ng-repeat="file in activeTab.protoObject.dependencies">
+              {{file}}
+            </li>
+          </ul>
+        </td>
+      </tr>
+      <tr ng-show="activeTab.protoObject.getf('options')">
+        <th>Options:</th>
+        <td class="wrap-word">
+          <pre>{{activeTab.protoObject.getf('options').asJSONWithPackages | json }}</pre>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script type="text/ng-template" id="optionsModal.html">
+  <div class="modal-header">
+    <h4>Options - {{fieldOptions.field.getf('name')}}</h4>
+  </div>
+  <div class='modal-body'>
+    <div class='proto-option-content'>
+      <pre><code>{{fieldOptions.field.getf('options').asJSONWithPackages() | json}}</code></pre>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="close()">Close</button>
+  </div>
+</script>
+
+<script type="text/ng-template" id="protoFileModal.html">
+  <div class="modal-header">
+    <h4>{{fileName}}</h4>
+  </div>
+  <div class='modal-body'>
+    <pre class='proto-file-content'>{{protoFileContent}}</pre>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="close()">Close</button>
+  </div>
+</script>

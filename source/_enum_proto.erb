@@ -1,0 +1,22 @@
+<div class='enum' ng-if="activeTab.protoObject.isEnum">
+  <div ng-controller="EnumCtrl">
+    <table class='table table-striped table-hover'>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="def in enumProto.protoObject.descriptor.getf('value')">
+          <td><span ng-show="def.getf('options')" ng-click="openOptionsModal(def)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
+          <td>{{def.getf('number')}}</td>
+          <td>{{def.getf('name')}}</td>
+          <td><div ng-bind-html="def.getf('doc') | markdown"></div></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

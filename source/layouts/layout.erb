@@ -1,0 +1,95 @@
+<!doctype html>
+<html ng-app='pilgrimApp'>
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine or request Chrome Frame -->
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Use title if it's in the page YAML frontmatter -->
+    <title>Pilgrim</title>
+
+    <%= stylesheet_link_tag "all" %>
+
+    <script type="text/ng-template" id="noop.html"></script>
+  </head>
+
+  <body ng-controller='ExplorerCtrl' ng-cloak class="<%= page_classes %> ng-cloak">
+    <div class="container-fluid">
+      <div class='col-lg-4 well'>
+        <%= partial "scoped_objects" %>
+      </div>
+      <div ng-controller="TabsCtrl" class='col-lg-8'>
+        <ul class='list-unstyled list-inline'>
+          <li ng-repeat="tab in tabs">
+            <div  ng-class="{active: (tab == activeTab)}" class='btn btn-default btn-small'>
+              <a ng-href="#!/protos/{{tab.protoObject.fullName}}">
+                <span class="{{tab.protoObject.glyphs}}"></span>
+                {{tab.protoObject.name}}
+                <a class='glyphicon glyphicon-remove-sign' ng-click="removeTab(tab)"> </a>
+              </a>
+            </div>
+          </li>
+        </ul>
+        <%= partial 'proto_detail' %>
+        <!-- The ng-view is only a trigger to let the controller get setup -->
+        <div ng-view></div>
+      </div>
+    </div>
+
+    <script type="text/ng-template" id="loadingModal.html">
+      <div class="modal-header">
+        <h4>Fetching Protos</h4>
+      </div>
+      <div class='modal-body'>
+        <div class='spinner'>
+          <div class="rect1"></div>
+          <div class="rect2"></div>
+          <div class="rect3"></div>
+          <div class="rect4"></div>
+          <div class="rect5"></div>
+        </div>
+      </div>
+    </script>
+
+    <script type="text/ng-template" id="errorLoadingProtos.html">
+      <div class="modal-header">
+        <h4>Could not fetch protos ({{error.status}})</h4>
+        <div class='modal-body'>
+          <p>{{error.data}}</p>
+          <p>Error fetching {{protoBundle}}</p>
+
+          <br>
+          <div id="knownProtoBundles">
+            <h4>Example bundles</h4>
+            <ul>
+              <li><a href="/?protoBundle=/proto-bundles/fender-proto-bundle.json">Fender</a> (<a href="https://github.com/hassox/fender">Github</a>)</li>
+              <li><a href="/?protoBundle=/proto-bundles/marvel-proto-bundle.json">Marvel</a> (<a href="https://github.com/hassox/marvel-protos">Github</a>)</li>
+            </ul>
+          </div>
+          <br>
+
+          <p>
+            Want to see your own proto bundle? Use <a href="https://github.com/hassox/pilgrimize">pilgrimize</a>
+            <br>
+            <strong>No proto files or bundles are uploaded to Pilgrim</strong>
+          </p>
+
+
+          <form method="GET" action="#!/" role="form">
+
+            <div class="form-group">
+              <label class="col-2 control-label">Fetch protos</label>
+              <input class='form-control' ng-model="newBundle" name="protoBundle"/>
+            </div>
+
+            <input type="submit" value="Fetch" class="btn btn-default"/>
+          </form>
+        </div>
+      </div>
+    </script>
+
+    <%= javascript_include_tag  "vendor" %>
+    <%= javascript_include_tag  "app" %>
+  </body>
+</html>

@@ -1,0 +1,86 @@
+<div class='message' ng-if="activeTab.protoObject.isMessage">
+  <div ng-controller='MessageCtrl'>
+    <table class='table-striped table table-hover'>
+      <thead>
+        <tr>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th></th>
+          <th>Type</th>
+          <th>Name</th>
+          <th>Default</th>
+          <th>Comment</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-class-odd="'odd'" ng-repeat="field in ownPackageFields.fields">
+          <td><span ng-show="field.getf('options')" ng-click="openOptionsModal(field)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
+          <td ng-class="field.fieldType"></td>
+          <td>{{field.getf('number')}}</td>
+          <td>{{fieldType(field)}}</td>
+          <td>
+            <span ng-hide="isComplexType(field)">
+              {{field | typeAsString:activeTab.protoObject.package }}
+            </span>
+            <span ng-show="isComplexType(field)">
+              <a href="#!/protos/{{field.concrete.fullName}}">
+                {{field | typeAsString:activeTab.protoObject.package }}
+              </a>
+            </span>
+          </td>
+          <td><strong>{{field.getf('name')}}</strong></td>
+          <td>{{field.getf('default_value') | displayValue}}</td>
+          <td>{{field.getf('doc')}}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div ng-show='otherPackageFields.length'>
+      <h4>Extensions</h4>
+      <div ng-repeat="otherFields in otherPackageFields">
+        <hr>
+        <h6>
+          From:
+          <a ng-click="query.search = otherFields.pkg">
+            {{otherFields.pkg}}
+          </a>
+        </h6>
+        <table class='table-striped table table-hover'>
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th>Type</th>
+              <th>Name</th>
+              <th>Default</th>
+              <th>Comment</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-class-odd="'odd'" ng-repeat="field in otherFields.fields">
+              <td ng-class="field.fieldType"></td>
+              <td>{{field.getf('number')}}</td>
+              <td>{{fieldType(field)}}</td>
+              <td>
+                <span ng-hide="isComplexType(field)">
+                  {{field | typeAsString:activeTab.protoObject.package }}
+                </span>
+                <span ng-show="isComplexType(field)">
+                  <a href="#!/protos/{{field.concrete.fullName}}">
+                    {{field | typeAsString:activeTab.protoObject.package }}
+                  </a>
+                </span>
+              </td>
+              <td><strong>{{field.getf('name')}}</strong></td>
+              <td>{{field.getf('default_value') | displayValue}}</td>
+              <td>{{field.getf('doc')}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+

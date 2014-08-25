@@ -1,0 +1,24 @@
+<section id="scoped-objects" ng-controller="ObjectListCtrl">
+  <h1 class="brand">
+    <a href="/">Pilgrim</a>
+  </h1>
+  <div class="input-group">
+    <input type='text' ng-model="query.search" placeholder="Search" class="form-control">
+    <div class="input-group-btn">
+      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.service" btn-checkbox>Services</button>
+      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.message" btn-checkbox>Messages</button>
+      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.enum" btn-checkbox>Enums</button>
+    </div>
+  </div>
+  <div ng-show="(protos | filter:{fullName:query.objectQuery} | protoByType:query.scopedFilter).length">
+    <hr>
+    <ul class='list-unstyled proto-object-result-list'>
+      <li ng-repeat="protoObject in protos | filter:{fullName:query.objectQuery} | protoByType:query.scopedFilter | orderBy:'fullName'">
+        <a ng-class="protoObject.type" ng-href='#!/protos/{{protoObject.fullName}}' class="proto-object-result">
+          <span ng-class="protoObject.glyphs"></span>
+          {{protoObject.fullName}}
+        </a>
+      </li>
+    </ul>
+  </div>
+</section>
