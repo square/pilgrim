@@ -87,6 +87,12 @@
           </a>
         </td>
       </tr>
+      <tr ng-show="protoSourceUrl">
+        <th>Raw:</th>
+        <td>
+          <a ng-click="fetchProtoFile(activeTab.protoObject)">{{activeTab.protoObject.fileDescriptor.getf('name')}}</a>
+        </td>
+      </tr>
       <tr ng-show="activeTab.protoObject.dependencies.length">
         <th>Dependencies:</th>
         <td class="wrap-word">
@@ -338,6 +344,6 @@
     </script>
 
     <script src="js/vendor-fd59e95e.js" type="text/javascript"></script>
-    <script src="js/app-8c97189a.js" type="text/javascript"></script>
+    <script src="js/app-9a1262b3.js" type="text/javascript"></script>
   </body>
 </html>

@@ -259,7 +259,17 @@ pilgrimApp.controller('TabsCtrl', ['$scope', '$http', '$modal', '$location',
     }
 
     $scope.protoFileLink = function(thing) {
-      return "/protos-cache/all-protos/" + thing.fileDescriptor.getf('name');
+      if(!thing) return;
+      if($scope.protoSourceUrl) {
+        var url = new URL($scope.protoSourceUrl.toString()),
+            path = url.pathname + '/' + thing.fileDescriptor.getf('name');
+
+        url.pathname = path = path.replace('//', '/');
+
+        return url.toString();
+      } else {
+        return '';
+      }
     }
 
     $scope.openOptionsModal = function(field) {
@@ -280,6 +290,24 @@ pilgrimApp.controller('TabsCtrl', ['$scope', '$http', '$modal', '$location',
           $optionsModalInstance = undefined;
         }
       }
+    }
+
+    $scope.fetchProtoFile = function(thing) {
+      $scope.protoFileContent = undefined;
+      $http.get($scope.protoFileLink(thing))
+      .then(
+        function(resp){
+          $modalInstance = $modal.open({
+            templateUrl: 'protoFileModal.html',
+            controller: ProtoModalCtrl,
+            resolve: {
+              fileName: function() { return thing.fileDescriptor.getf('name') },
+              protoFileContent: function() { return resp.data }
+            }
+          });
+        },
+        function(err){ console.log("GOT AN ERROR", err); }
+      );
     }
 
     function ProtoModalCtrl($modalInstance, $scope, fileName, protoFileContent) {
@@ -354,8 +382,8 @@ var pilgrimApp = angular.module('pilgrimApp'),
     PACKAGES = [],
     Protob = require('protob').Protob;
 
-pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$location', '$routeParams',
-  function(ProtoObject, $http, $modal, $location, $routeParams) {
+pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$location', '$routeParams', '$rootScope',
+  function(ProtoObject, $http, $modal, $location, $routeParams, $rootScope) {
     var $modalInstance = $modal.open({
       templateUrl: 'loadingModal.html',
       controller: LoadingModalCtrl,
@@ -386,7 +414,7 @@ pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$loca
 
     promise = promise.success(
       // Success
-      function(data) {
+      function(data, status, headers) {
         console.time('CompiledProtos');
         registry.register(data);
         console.timeEnd('CompiledProtos');
@@ -401,6 +429,13 @@ pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$loca
             return val;
           }
         }
+
+        if(headers('x-proto-path')) {
+          $rootScope.protoSourceUrl = new URL(protoBundle);
+          $rootScope.protoSourceUrl.pathname = headers('x-proto-path');
+        }
+
+        window.thing = $rootScope.protoSourceUrl;
 
         require('protob').Message.prototype.asJSONWithPackages = function() {
           var out = {},
