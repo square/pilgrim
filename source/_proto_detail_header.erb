@@ -29,6 +29,12 @@
           </a>
         </td>
       </tr>
+      <tr ng-show="protoSourceUrl">
+        <th>Raw:</th>
+        <td>
+          <a ng-click="fetchProtoFile(activeTab.protoObject)">{{activeTab.protoObject.fileDescriptor.getf('name')}}</a>
+        </td>
+      </tr>
       <tr ng-show="activeTab.protoObject.dependencies.length">
         <th>Dependencies:</th>
         <td class="wrap-word">

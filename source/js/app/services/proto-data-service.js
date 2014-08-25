@@ -4,8 +4,8 @@ var pilgrimApp = angular.module('pilgrimApp'),
     PACKAGES = [],
     Protob = require('protob').Protob;
 
-pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$location', '$routeParams',
-  function(ProtoObject, $http, $modal, $location, $routeParams) {
+pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$location', '$routeParams', '$rootScope',
+  function(ProtoObject, $http, $modal, $location, $routeParams, $rootScope) {
     var $modalInstance = $modal.open({
       templateUrl: 'loadingModal.html',
       controller: LoadingModalCtrl,
@@ -36,7 +36,7 @@ pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$loca
 
     promise = promise.success(
       // Success
-      function(data) {
+      function(data, status, headers) {
         console.time('CompiledProtos');
         registry.register(data);
         console.timeEnd('CompiledProtos');
@@ -51,6 +51,13 @@ pilgrimApp.factory('ProtoDataService', ['ProtoObject', '$http', '$modal', '$loca
             return val;
           }
         }
+
+        if(headers('x-proto-path')) {
+          $rootScope.protoSourceUrl = new URL(protoBundle);
+          $rootScope.protoSourceUrl.pathname = headers('x-proto-path');
+        }
+
+        window.thing = $rootScope.protoSourceUrl;
 
         require('protob').Message.prototype.asJSONWithPackages = function() {
           var out = {},

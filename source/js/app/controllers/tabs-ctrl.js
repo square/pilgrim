@@ -38,7 +38,17 @@ pilgrimApp.controller('TabsCtrl', ['$scope', '$http', '$modal', '$location',
     }
 
     $scope.protoFileLink = function(thing) {
-      return "/protos-cache/all-protos/" + thing.fileDescriptor.getf('name');
+      if(!thing) return;
+      if($scope.protoSourceUrl) {
+        var url = new URL($scope.protoSourceUrl.toString()),
+            path = url.pathname + '/' + thing.fileDescriptor.getf('name');
+
+        url.pathname = path = path.replace('//', '/');
+
+        return url.toString();
+      } else {
+        return '';
+      }
     }
 
     $scope.openOptionsModal = function(field) {
@@ -59,6 +69,24 @@ pilgrimApp.controller('TabsCtrl', ['$scope', '$http', '$modal', '$location',
           $optionsModalInstance = undefined;
         }
       }
+    }
+
+    $scope.fetchProtoFile = function(thing) {
+      $scope.protoFileContent = undefined;
+      $http.get($scope.protoFileLink(thing))
+      .then(
+        function(resp){
+          $modalInstance = $modal.open({
+            templateUrl: 'protoFileModal.html',
+            controller: ProtoModalCtrl,
+            resolve: {
+              fileName: function() { return thing.fileDescriptor.getf('name') },
+              protoFileContent: function() { return resp.data }
+            }
+          });
+        },
+        function(err){ console.log("GOT AN ERROR", err); }
+      );
     }
 
     function ProtoModalCtrl($modalInstance, $scope, fileName, protoFileContent) {
