@@ -1,6 +1,6 @@
 ## Pilgrim
 
-Pilgrim is a one page application that provides documentation for protocol buffers.
+Pilgrim is a one page application that provides documentation for protocol buffers. It is compiled into a static site by [middleman](https://github.com/middleman/middleman).
 
 This application does not upload your bundle to the server and relies on CORS to fetch proto bundles.
 
@@ -10,7 +10,7 @@ Proto bundles are created with [protob](https://github.com/square/protob).
 
 ### How to use?
 
-Pilgrim uses middleman. Clone pilgrim and `bundle install`
+Serve pilgrim/build from your favourite web-server.
 
 To fetch your own proto bundle, use [pilgrimize](https://github.com/hassox/pilgrimize).
 
