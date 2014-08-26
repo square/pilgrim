@@ -3,11 +3,11 @@
     <a href="/">Pilgrim</a>
   </h1>
   <div class="input-group">
-    <input type='text' ng-model="query.search" placeholder="Search" class="form-control">
+    <input type='text' ng-model="query.search" placeholder="Search" class="form-control search-bar">
     <div class="input-group-btn">
-      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.service" btn-checkbox>Services</button>
-      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.message" btn-checkbox>Messages</button>
-      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.enum" btn-checkbox>Enums</button>
+      <button type="button" class="btn btn-primary services" ng-model="query.scopedFilter.service" btn-checkbox>Services</button>
+      <button type="button" class="btn btn-primary messages" ng-model="query.scopedFilter.message" btn-checkbox>Messages</button>
+      <button type="button" class="btn btn-primary enums" ng-model="query.scopedFilter.enum" btn-checkbox>Enums</button>
     </div>
   </div>
   <div ng-show="(protos | filter:{fullName:query.objectQuery} | protoByType:query.scopedFilter).length">

@@ -8,13 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Use title if it's in the page YAML frontmatter -->
     <title>Pilgrim</title>
+    <style>
+      @charset "UTF-8";
+      [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],
+      .ng-cloak, .x-ng-cloak,
+      .ng-hide {
+          display: none !important;
+      }
+      ng\:form {
+          display: block;
+      }
+    </style>
 
     <%= stylesheet_link_tag "all" %>
 
     <script type="text/ng-template" id="noop.html"></script>
   </head>
 
-  <body ng-controller='ExplorerCtrl' ng-cloak class="<%= page_classes %> ng-cloak">
+  <body ng-controller='ExplorerCtrl' ng-cloak class="<%= page_classes %> ng-cloak" ng-keypress="handleKeypress($event)">
     <div class="container-fluid">
       <div class='col-lg-4 well'>
         <%= partial "scoped_objects" %>
