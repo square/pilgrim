@@ -8,13 +8,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- Use title if it's in the page YAML frontmatter -->
     <title>Pilgrim</title>
+    <style>
+      @charset "UTF-8";
+      [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak],
+      .ng-cloak, .x-ng-cloak,
+      .ng-hide {
+          display: none !important;
+      }
+      ng\:form {
+          display: block;
+      }
+    </style>
 
     <link href="css/all-47faafbd.css" rel="stylesheet" type="text/css" />
 
     <script type="text/ng-template" id="noop.html"></script>
   </head>
 
-  <body ng-controller='ExplorerCtrl' ng-cloak class="index ng-cloak">
+  <body ng-controller='ExplorerCtrl' ng-cloak class="index ng-cloak" ng-keypress="handleKeypress($event)">
     <div class="container-fluid">
       <div class='col-lg-4 well'>
         <section id="scoped-objects" ng-controller="ObjectListCtrl">
@@ -22,11 +33,11 @@
     <a href="/">Pilgrim</a>
   </h1>
   <div class="input-group">
-    <input type='text' ng-model="query.search" placeholder="Search" class="form-control">
+    <input type='text' ng-model="query.search" placeholder="Search" class="form-control search-bar">
     <div class="input-group-btn">
-      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.service" btn-checkbox>Services</button>
-      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.message" btn-checkbox>Messages</button>
-      <button type="button" class="btn btn-primary" ng-model="query.scopedFilter.enum" btn-checkbox>Enums</button>
+      <button type="button" class="btn btn-primary services" ng-model="query.scopedFilter.service" btn-checkbox>Services</button>
+      <button type="button" class="btn btn-primary messages" ng-model="query.scopedFilter.message" btn-checkbox>Messages</button>
+      <button type="button" class="btn btn-primary enums" ng-model="query.scopedFilter.enum" btn-checkbox>Enums</button>
     </div>
   </div>
   <div ng-show="(protos | filter:{fullName:query.objectQuery} | protoByType:query.scopedFilter).length">
@@ -344,6 +355,6 @@
     </script>
 
     <script src="js/vendor-fd59e95e.js" type="text/javascript"></script>
-    <script src="js/app-9a1262b3.js" type="text/javascript"></script>
+    <script src="js/app-4ce03bb7.js" type="text/javascript"></script>
   </body>
 </html>

@@ -41193,7 +41193,31 @@ var pilgrimApp = angular.module('pilgrimApp');
 
 pilgrimApp.controller('ExplorerCtrl', ['$scope',
   function($scope) {
-    $scope.query = { scopedFilter: {service: true}};
+    $scope.query = {
+      scopedFilter: {service: false, message: true, enum: true} // need to invert this for the toggle code
+    };
+
+    $scope.handleKeypress = function($event) {
+      if($event.which == 47 || $event.which == 191) { // '/' key pressed
+        $scope.searchFocusEvent = $event;
+      }
+
+      if($event.ctrlKey) {
+        switch ($event.which) {
+          case 19: // s
+            $scope.toggleServices = new Date();
+            break;
+          case 5: // e
+            $scope.toggleEnums = new Date();
+            break;
+          case 13: // m
+            $scope.toggleMessages = new Date();
+            break;
+          default:
+            break;
+        }
+      }
+    };
   }
 ]);
 pilgrimApp.controller('MessageCtrl', ['$scope',
@@ -41240,9 +41264,29 @@ var pilgrimApp = angular.module('pilgrimApp');
 pilgrimApp.controller('NoopCtrl', function() {});
 var  pilgrimApp = angular.module('pilgrimApp');
 
-pilgrimApp.controller('ObjectListCtrl', ['$scope', '$location', 'protos', '$log',
-  function($scope, $location, protos, $log) {
+pilgrimApp.controller('ObjectListCtrl', ['$scope', '$location', 'protos', '$log', '$element',
+  function($scope, $location, protos, $log, $element) {
     $scope.protos = protos;
+
+    $scope.$watch('searchFocusEvent', function() {
+      var $objs = $('#scoped-objects input.search-bar');
+      if(!$objs.has(':focus').length) {
+        $objs.focus();
+        $scope.searchFocusEvent && $scope.searchFocusEvent.preventDefault && $scope.searchFocusEvent.preventDefault();
+      }
+    });
+
+    $scope.$watch('toggleServices', function() {
+      $scope.query.scopedFilter.service = !$scope.query.scopedFilter.service;
+    });
+
+    $scope.$watch('toggleEnums', function() {
+      $scope.query.scopedFilter.enum = !$scope.query.scopedFilter.enum;
+    });
+
+    $scope.$watch('toggleMessages', function() {
+      $scope.query.scopedFilter.message = !$scope.query.scopedFilter.message;
+    });
 
     $scope.$watch('query.search', _.debounce(function() {
       $scope.$apply(function() {
