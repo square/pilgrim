@@ -20,7 +20,7 @@
       }
     </style>
 
-    <link href="css/all-47faafbd.css" rel="stylesheet" type="text/css" />
+    <link href="css/all-1478de28.css" rel="stylesheet" type="text/css" />
 
     <script type="text/ng-template" id="noop.html"></script>
   </head>
@@ -166,7 +166,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-class-odd="'odd'" ng-repeat="field in ownPackageFields.fields">
+        <tr ng-class-odd="'odd'" ng-class='{deprecated: field.getf("options").getf("deprecated"), "text-muted": field.getf("options").getf("deprecated")}' ng-repeat="field in ownPackageFields.fields">
           <td><span ng-show="field.getf('options')" ng-click="openOptionsModal(field)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
           <td ng-class="field.fieldType"></td>
           <td>{{field.getf('number')}}</td>
@@ -355,6 +355,6 @@
     </script>
 
     <script src="js/vendor-fd59e95e.js" type="text/javascript"></script>
-    <script src="js/app-4ce03bb7.js" type="text/javascript"></script>
+    <script src="js/app-ca3179c9.js" type="text/javascript"></script>
   </body>
 </html>

@@ -14,6 +14,10 @@ a {
   cursor: pointer;
 }
 
+.deprecated {
+  text-decoration: line-through;
+}
+
 .brand {
   margin-top: 0;
   background: url("/img/pilgrim.png") no-repeat; /* 52x40 */

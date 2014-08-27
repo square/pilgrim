@@ -14,7 +14,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-class-odd="'odd'" ng-repeat="field in ownPackageFields.fields">
+        <tr ng-class-odd="'odd'" ng-class='{deprecated: field.getf("options").getf("deprecated"), "text-muted": field.getf("options").getf("deprecated")}' ng-repeat="field in ownPackageFields.fields">
           <td><span ng-show="field.getf('options')" ng-click="openOptionsModal(field)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span></td>
           <td ng-class="field.fieldType"></td>
           <td>{{field.getf('number')}}</td>
