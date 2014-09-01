@@ -1,8 +1,9 @@
 <div class='proto-detail-header'>
   <h1>
     <span class="{{activeTab.protoObject.glyphs}}"></span>
-    <span ng-show="activeTab.protoObject.protoObject.descriptor.getf('options')" ng-click="openOptionsModal(activeTab.protoObject.protoObject.descriptor)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span>
     {{activeTab.protoObject.name}}
+    <span ng-show="activeTab.protoObject.protoObject.descriptor.getf('options')" ng-click="openOptionsModal(activeTab.protoObject.protoObject.descriptor)" class="glyphicon glyphicon-zoom-in text-muted small clickable"></span>
+    <span ng-show="exposeServiceExplorer()" class="glyphicon glyphicon-cloud-upload text-muted small clickable" ng-click="openExplorerModal(activeTab.protoObject.protoObject)"></span>
   </h1>
   <p ng-show="activeTab.protoObject.protoObject.descriptor.getf('doc')">
     <div ng-bind-html="activeTab.protoObject.protoObject.descriptor.getf('doc') | markdown"></div>
@@ -80,3 +81,43 @@
     <button class="btn btn-warning" ng-click="close()">Close</button>
   </div>
 </script>
+
+<script type="text/ng-template" id="serviceExplorerModal.html">
+  <div class="modal-header">
+    <h4><span class="text-muted">{{service.parent}}.</span>{{service.clazz}}</h4>
+    <input ng-model="currentAddress" class="form-control" ng-blur="updateServiceAddress(currentAddress)">
+    <div>
+      <h4>Headers <span class="clickable" ng-click="addHeader()">+</span></h4>
+
+      <ul class="list-unstyled">
+        <li ng-repeat="header in headers" class="row">
+          <div class="col-xs-3">
+            <input class="form-control" ng-model="header.key" />
+          </div>
+          <div class="col-xs-4">
+            <input class="form-control" ng-model="header.value" />
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <div class="modal-body">
+    <div id="serviceExplorerContent">
+      <div class="btn-group">
+        <button ng-repeat="methodName in methodNames" type="button" class="btn btn-default" ng-click="setCurrentMethod(methodName)">
+          {{methodName}}
+        </button>
+      </div>
+      <hr/>
+      <div class="container-fluid">
+        <h4>{{currentMethod.inputType.fullName}}</h4>
+        <div id="explorer-method-form" class="col-md-6"></div>
+        <pre ng-show="currentResult" id="explorer-results-form" class="col-md-6">{{currentResult | json}}</pre>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-warning" ng-click="close()">Close</button>
+  </div>
+</script>
+

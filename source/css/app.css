@@ -57,3 +57,9 @@ a {
   cursor: pointer;
 }
 
+.modal.service-explorer .modal-dialog {
+  width: 95%;
+}
+.popover {
+  width: 200px;
+}

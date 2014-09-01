@@ -6,3 +6,5 @@
 //= require vendor/bootstrap
 //= require vendor/underscore
 //= require vendor/browser-protob
+//= require vendor/browser-fender.min.js
+//= require vendor/react-fender.js
