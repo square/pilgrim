@@ -8,7 +8,9 @@ pilgrimApp.controller('ExplorerCtrl', ['$scope',
 
     $scope.handleKeypress = function($event) {
       if($event.which == 47 || $event.which == 191) { // '/' key pressed
-        $scope.searchFocusEvent = $event;
+        if(!$($event.target).is(":input")) {
+          $scope.searchFocusEvent = $event;
+        }
       }
 
       if($event.ctrlKey) {
