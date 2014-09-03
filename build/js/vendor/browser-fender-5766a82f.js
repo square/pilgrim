@@ -279,8 +279,6 @@ function buildSpecificRequestBuilder (builderOpts) {
         missingParameterFormat = function(name) { return '`' + name + '`'; },
         templateOpts = FlatKeys.keysFromObject(method.fenderUrlTemplate.varNames, req.asJSON());
 
-    console.error("THE URL IS", url);
-
     if(thisService.context.headers) {
       Object.keys(thisService.context.headers).forEach(function(key) {
         requestOpts.headers[key] = thisService.context.headers[key];
@@ -14250,7 +14248,6 @@ Object.defineProperties(Proxy.prototype, {
    * to the downstream proxy server.
    */
   call: d(function (request) {
-    console.log(this);
     var opts = {
       method: request.method,
       protocol: this.protocol,
@@ -14447,8 +14444,6 @@ function sendXMLHttpRequest(options) {
     var xhr = new XMLHttpRequest;
     xhr.open(options.method, stringifyURL(options), true);
 
-    console.error("THE OPTIONS ARE", options);
-    console.error("HERE WE ARE. SETTING WITH CREDS TO", options.withCredentials);
     if ('withCredentials' in xhr)
       xhr.withCredentials = ('withCredentials' in options) ? options.withCredentials : true;
 

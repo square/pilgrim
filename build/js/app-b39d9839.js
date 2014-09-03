@@ -409,7 +409,6 @@ pilgrimApp.controller('TabsCtrl', ['$scope', '$http', '$modal', '$location',
             $scope.headers.forEach(function(header) {
               if(header.key && header.value) {
                 context.headers[header.key] = header.value;
-                console.error(header);
               }
             });
 
