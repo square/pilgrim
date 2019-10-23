@@ -2,6 +2,12 @@
 
 Pilgrim is a one page application that provides documentation for protocol buffers. It is compiled into a static site by [middleman](https://github.com/middleman/middleman).
 
+## DEPRECATED
+
+This project is no longer maintained.
+
+----
+
 This application does not upload your bundle to the server and relies on CORS to fetch proto bundles.
 
 ### Creating your own proto bundle
